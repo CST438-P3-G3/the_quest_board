@@ -2,144 +2,132 @@ openapi: 3.1.0
 info:
   title: The Quest Board API
   version: 1.0.0
-  description: >-
-    Initial API contract for the Sprint 1 GitHub sign-in vertical slice
+  description: Initial API contract for the Sprint 1 GitHub sign in vertical slice.
+
 paths:
   /auth/github:
     post:
-      operationID: singIn
-      paths:
-        /auth/github:
-          post:
-            operationId: signInWithGitHub
-            summary: Sign in with GitHub
-            description: >-
-              Exchanges the GitHub authorization code obtained by the client using
-              Authorization Code with PKCE. The API verifies the GitHub identity and
-              returns the app's own short-lived access token. Provider client secrets
-              are held by the API and are never sent by the client.
-            tags:
-              - Authentication
-            requestBody:
-              required: true
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/GitHubSignInRequest'
-            responses:
-              '200':
-                description: GitHub identity verified and app session created.
-                content:
-                  application/json:
-                    schema:
-                      $ref: '#/components/schemas/SignInResponse'
-              '400':
-                description: Request is missing required fields or is malformed.
-                content:
-                  application/problem+json:
-                    schema:
-                      $ref: '#/components/schemas/Problem'
-              '401':
-                description: GitHub rejected the authorization code or the email is unverified.
-                content:
-                  application/problem+json:
-                    schema:
-                      $ref: '#/components/schemas/Problem'
-              '500':
-                description: The API could not complete sign-in because of an unexpected error.
-                content:
-                  application/problem+json:
-                    schema:
-                      $ref: '#/components/schemas/Problem'
-      components:
-        schemas:
-          GitHubSignInRequest:
-            type: object
-            additionalProperties: false
-            required:
-              - code
-              - codeVerifier
-              - redirectUri
-            properties:
-              code:
-                type: string
-                minLength: 1
-                description: One-time authorization code returned by GitHub to the client.
-              codeVerifier:
-                type: string
-                minLength: 1
-                description: PKCE verifier paired with the challenge in the authorization request.
-              redirectUri:
-                type: string
-                format: uri
-                description: Redirect URI used for the GitHub authorization request.
-          SignInResponse:
-            type: object
-            additionalProperties: false
-            required:
-              - accessToken
-              - tokenType
-              - expiresIn
-              - user
-            properties:
-              accessToken:
-                type: string
-                description: Short-lived JWT issued by The Quest Board API.
-              tokenType:
-                type: string
-                const: Bearer
-              expiresIn:
-                type: integer
-                minimum: 1
-                description: Access token lifetime in seconds.
-              user:
-                $ref: '#/components/schemas/UserSummary'
-          UserSummary:
-            type: object
-            additionalProperties: false
-            required:
-              - id
-              - displayName
-            properties:
-              id:
-                type: string
-                format: uuid
-              displayName:
-                type: string
-                minLength: 1
-              email:
-                type: string
-                format: email
-                description: Verified email associated with the signed-in account.
-          Problem:
-            type: object
-            description: RFC 9457 Problem Details response.
-            properties:
-              type:
-                type: string
-                format: uri-reference
-              title:
-                type: string
-              status:
-                type: integer
-              detail:
-                type: string
-              instance:
-                type: string
-                format: uri-reference
-            required:
-              - type
-              - title
-              - status
-          ProviderConflictProblem:
-            allOf:
-              - $ref: '#/components/schemas/Problem'
-              - type: object
-                required:
-                  - registeredProvider
-                properties:
-                  registeredProvider:
-                    type: string
-                    enum:
-                      - google
-                    description: Provider already associated with the verified email.
+      operationId: signInWithGitHub
+      summary: Sign in with GitHub
+      description: >-
+        Exchanges the GitHub authorization code obtained by the client using
+        Authorization Code with PKCE. The API verifies the GitHub identity and
+        returns the app's own short lived access token. Provider client secrets
+        are held by the API and are never sent by the client.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GitHubSignInRequest'
+      responses:
+        '200':
+          description: GitHub identity verified and app session created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignInResponse'
+        '400':
+          description: Request is missing required fields or is malformed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: GitHub rejected the authorization code or the email is unverified.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: The API could not complete sign in because of an unexpected error.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+components:
+  schemas:
+    GitHubSignInRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - code
+        - codeVerifier
+        - redirectUri
+      properties:
+        code:
+          type: string
+          minLength: 1
+          description: One time authorization code returned by GitHub to the client.
+        codeVerifier:
+          type: string
+          minLength: 1
+          description: PKCE verifier paired with the challenge in the authorization request.
+        redirectUri:
+          type: string
+          format: uri
+          description: Redirect URI used for the GitHub authorization request.
+
+    SignInResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - accessToken
+        - tokenType
+        - expiresIn
+        - user
+      properties:
+        accessToken:
+          type: string
+          description: Short lived JWT issued by The Quest Board API.
+        tokenType:
+          type: string
+          const: Bearer
+        expiresIn:
+          type: integer
+          minimum: 1
+          description: Access token lifetime in seconds.
+        user:
+          $ref: '#/components/schemas/UserSummary'
+
+    UserSummary:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - displayName
+      properties:
+        id:
+          type: string
+          format: uuid
+        displayName:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          format: email
+          description: Verified email associated with the signed in account.
+
+    Problem:
+      type: object
+      description: RFC 9457 Problem Details response.
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+      required:
+        - type
+        - title
+        - status
