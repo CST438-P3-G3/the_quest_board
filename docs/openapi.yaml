@@ -111,9 +111,6 @@ paths:
                 type: string
                 format: email
                 description: Verified email associated with the signed-in account.
-              avatarUrl:
-                type: string
-                format: uri
           Problem:
             type: object
             description: RFC 9457 Problem Details response.
