@@ -1,98 +1,171 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+export default function TasksScreen() {
+  const [tasks, setTasks] = useState<string[]>([]);
+  const [isAddingTask, setIsAddingTask] = useState(false);
+  const [newTask, setNewTask] = useState('');
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
+  function addTask() {
+    const task = newTask.trim();
+    if (!task) return;
+
+    setTasks((currentTasks) => [...currentTasks, task]);
+    setNewTask('');
+    setIsAddingTask(false);
   }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    <SafeAreaView style={styles.screen}>
+      <View style={styles.content}>
+        <Text style={styles.title}>Tasks</Text>
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => setIsAddingTask(true)}
+          style={({ pressed }) => [styles.addButton, pressed && styles.buttonPressed]}>
+          <Text style={styles.addButtonText}>+ Add task</Text>
+        </Pressable>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+        {isAddingTask && (
+          <View style={styles.form}>
+            <TextInput
+              accessibilityLabel="Task name"
+              autoFocus
+              onChangeText={setNewTask}
+              onSubmitEditing={addTask}
+              placeholder="What needs to be done?"
+              placeholderTextColor="#64748b"
+              returnKeyType="done"
+              style={styles.input}
+              value={newTask}
+            />
+            <View style={styles.formActions}>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => {
+                  setIsAddingTask(false);
+                  setNewTask('');
+                }}
+                style={[styles.actionButton, styles.cancelButton]}>
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                disabled={!newTask.trim()}
+                onPress={addTask}
+                style={({ pressed }) => [
+                  styles.actionButton,
+                  styles.saveButton,
+                  !newTask.trim() && styles.disabledButton,
+                  pressed && newTask.trim() && styles.buttonPressed,
+                ]}>
+                <Text style={styles.saveButtonText}>Add</Text>
+              </Pressable>
+            </View>
+          </View>
+        )}
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+        {tasks.length > 0 && (
+          <View style={styles.taskList}>
+            {tasks.map((task, index) => (
+              <View key={`${task}-${index}`} style={styles.taskRow}>
+                <Text style={styles.taskText}>{task}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    backgroundColor: '#f8fafc',
   },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+  content: {
+    width: '100%',
+    maxWidth: 640,
+    alignSelf: 'center',
+    padding: 24,
+    gap: 20,
   },
   title: {
-    textAlign: 'center',
+    color: '#0f172a',
+    fontSize: 32,
+    fontWeight: '700',
   },
-  code: {
-    textTransform: 'uppercase',
+  addButton: {
+    alignSelf: 'flex-start',
+    borderRadius: 10,
+    backgroundColor: '#2563eb',
+    paddingHorizontal: 18,
+    paddingVertical: 12,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  addButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  buttonPressed: {
+    opacity: 0.8,
+  },
+  form: {
+    gap: 12,
+  },
+  input: {
+    minHeight: 48,
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    borderRadius: 10,
+    backgroundColor: '#ffffff',
+    color: '#0f172a',
+    fontSize: 16,
+    paddingHorizontal: 14,
+  },
+  formActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 10,
+  },
+  actionButton: {
+    minHeight: 42,
+    justifyContent: 'center',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+  },
+  cancelButton: {
+    backgroundColor: '#e2e8f0',
+  },
+  cancelButtonText: {
+    color: '#334155',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  saveButton: {
+    backgroundColor: '#2563eb',
+  },
+  saveButtonText: {
+    color: '#ffffff',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  disabledButton: {
+    opacity: 0.45,
+  },
+  taskList: {
+    gap: 10,
+  },
+  taskRow: {
+    borderRadius: 10,
+    backgroundColor: '#ffffff',
+    padding: 16,
+  },
+  taskText: {
+    color: '#0f172a',
+    fontSize: 16,
   },
 });
