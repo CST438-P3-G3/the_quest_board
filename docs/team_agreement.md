@@ -29,3 +29,4 @@ Everyone on the team adds their name and GitHub username in the PR that commits 
 |Eashwar Sridharan | hypermarx |
 | Carlos Solian | Solian21 |
 | Michael Conley | mike-dc-ca |
+| Bryson Ruck | BrysonRuck |
