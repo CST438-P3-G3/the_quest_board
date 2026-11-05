@@ -8,13 +8,13 @@
 The course deadline is the outer limit: PR open by **2:00 AM Thursday**, reviewed and merged by
 **10:00 AM Thursday**. Our own deadline is earlier:
 
-- **Our PRs are open by:** `<day and time, e.g. Tuesday 9:00 PM>`
-- **Why that time works for us:** `<one sentence>`
+- **Our PRs are open by:** `Wednesday at 12 PM`
+- **Why that time works for us:** `This gives our team time to work on the project while still setting a resonable time to review the PR`
 
 ## Reviews
 
-- **A requested reviewer responds within:** `<e.g. 12 hours>`
-- **A PR that needs changes is updated within:** `<e.g. 12 hours>`
+- **A requested reviewer responds within:** `12 hours`
+- **A PR that needs changes is updated within:** `24 hours`
 
 ## Communication
 
