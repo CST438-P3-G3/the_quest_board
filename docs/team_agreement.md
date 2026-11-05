@@ -18,7 +18,7 @@ The course deadline is the outer limit: PR open by **2:00 AM Thursday**, reviewe
 
 ## Communication
 
-- **Team channel:** `Goggle Chat`
+- **Team channel:** `Google Chat`
 - **How someone says they are out** (so the deputy can merge): `The captin can @ the deputy in the chat so that they are aware`
 
 ## Signed
@@ -28,3 +28,4 @@ Everyone on the team adds their name and GitHub username in the PR that commits 
 | Name | GitHub |
 |Eashwar Sridharan | hypermarx |
 | Carlos Solian | Solian21 |
+| Michael Conley | mike-dc-ca |
