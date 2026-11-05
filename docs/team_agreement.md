@@ -26,5 +26,5 @@ The course deadline is the outer limit: PR open by **2:00 AM Thursday**, reviewe
 Everyone on the team adds their name and GitHub username in the PR that commits this file.
 
 | Name | GitHub |
-|---|---|
+|Eashwar Sridharan | hypermarx |
 | Carlos Solian | Solian21 |
