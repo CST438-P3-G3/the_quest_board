@@ -9,5 +9,8 @@ data class ProblemDetails(
     val title: String,
 
     // HTTP status code, such as 400 or 401
-    val status: Int
+    val status: Int,
+
+    // Extra information that helps explain this specific problem.
+    val detail: String? = null
 )

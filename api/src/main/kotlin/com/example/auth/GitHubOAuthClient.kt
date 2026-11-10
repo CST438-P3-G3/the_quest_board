@@ -46,7 +46,7 @@ class GitHubOAuthClient(
 
         // If GitHub returned an error instead of a token, don't treat sign-in as successful
         return tokenResponse?.access_token
-            ?: throw IllegalStateException("GitHub did not return an access token.")
+            ?: throw GitHubSignInRejectedException("GitHub did not return a user profile")
     }
 
     // Fields returned by GitHub's token endpoint

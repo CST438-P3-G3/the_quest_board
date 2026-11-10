@@ -2,7 +2,9 @@ package com.example
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.invoke
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 
 
@@ -10,20 +12,34 @@ import org.springframework.security.web.SecurityFilterChain
 class SecurityConfig {
     // Registering the rules Spring Security applies to incoming HTTP requests
     @Bean
-    fun securityFilterChain(http: org.springframework.security.config.annotation.web.builders.HttpSecurity): SecurityFilterChain {
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http {
+            // This API uses bearer tokens rather than browser session cookies
+            csrf {
+                disable()
+            }
+            // Do not create or use an HTTP session for authentication
+            sessionManagement {
+                sessionCreationPolicy = SessionCreationPolicy.STATELESS
+            }
+
             authorizeHttpRequests {
                 // Allows anyone to check whether the API is running
                 authorize("/health", permitAll)
                 // Allows user to start GitHub sign in before they have the app token
                 authorize("/auth/github", permitAll)
+
                 // Requires authentication for all other routes
                 authorize(anyRequest, authenticated)
             }
+            // Validates bearer JWTs using the JwtDecoder bean
+            oauth2ResourceServer {
+                jwt { }
+            }
             // gives Spring Security temp browser login page
-            formLogin { }
+//            formLogin { }
             // allows clients to authenticate with HTTP basic during development
-            httpBasic { }
+//            httpBasic { }
         }
 
         return http.build()
