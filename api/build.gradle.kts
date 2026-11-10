@@ -29,11 +29,16 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     // This adds support for validating JWT bearer tokens on protected API routes
     implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
+    // Runs versioned SQL migrations to create and update the database schema
+    implementation("org.springframework.boot:spring-boot-starter-flyway")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     // Provides the PostgreSQL driver when the API connects to the database at runtime
     runtimeOnly("org.postgresql:postgresql")
+
+    // Adds Flyway's PostgreSQL support
+    runtimeOnly("org.flywaydb:flyway-database-postgresql")
 }
 
 kotlin {
