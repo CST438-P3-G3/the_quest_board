@@ -186,12 +186,16 @@ components:
             additionalProperties: false
             required:
               - user_id
+              - username
               - points
             properties:
               user_id:
                 type: string
                 format: uuid
                 description: The uuid of the household member.
+              username:
+                type: string
+                description: The username of the household member.
               points:
                 type: integer
                 description: The total points the household member has gathered from completed tasks
