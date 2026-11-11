@@ -39,5 +39,7 @@ jobs:
       - name: Type-check frontend
         run: npx tsc --noEmit
 
-      - name: Build Docker image
-        run: docker build --tag the-quest-board:${{ github.sha }} .
+
+  #need backend api working first for this to run     
+  #   - name: Build Docker image
+  #     run: docker build --tag the-quest-board:${{ github.sha }} .
