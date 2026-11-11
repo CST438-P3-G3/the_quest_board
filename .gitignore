@@ -39,9 +39,6 @@ yarn-error.*
 # TypeScript
 *.tsbuildinfo
 
-# Example
-example
-
 # Generated native folders
 /ios
 /android
@@ -56,3 +53,4 @@ build/
 
 # Windows
 Thumbs.db
+/local.properties
