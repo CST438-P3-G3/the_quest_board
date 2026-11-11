@@ -71,6 +71,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Leaderboard'
+        '400':
+          description: Bad request, not a validly formatted family ID.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description:
+            Unauthorized, user must be signed in
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
         '403':
           description: Must be a member of the family or an admin to view the family leaderboard.
           content:
