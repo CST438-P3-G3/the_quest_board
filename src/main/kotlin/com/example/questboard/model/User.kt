@@ -5,7 +5,7 @@ import java.util.UUID
 data class User (
     val id: UUID,
     val email: String,
-    val email_verified: Boolean,
-    val display_name: String,
-    val system_role: String
+    val emailVerified: Boolean,
+    val displayName: String,
+    val systemRole: String
 )
