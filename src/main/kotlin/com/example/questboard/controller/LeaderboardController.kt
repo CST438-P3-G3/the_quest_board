@@ -18,7 +18,7 @@ class LeaderboardController(
 
     //Preauthorize will throw a 401 error if the user is not authenticated
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/{household_id}")
+    @GetMapping("/{householdId}")
     fun getLeaderboard(
         @PathVariable householdId: UUID
     ): Leaderboard {

@@ -48,7 +48,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Problem'
 
-    /leaderboard/{household_id}:
+    /leaderboard/{householdId}:
       get:
         summary: Display the leaderboard for a given household id.
         description: >-
