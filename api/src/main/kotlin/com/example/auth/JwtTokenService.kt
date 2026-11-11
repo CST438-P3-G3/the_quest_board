@@ -26,12 +26,12 @@ class JwtTokenService(
         val issuedAt = Instant.now()
         val expiresAt = issuedAt.plus(TOKEN_LIFETIME)
 
-        // A saved app user must have an ID to use as the token subject.
+        // A saved app user must have an ID to use as the token subject
         val userId = requireNotNull(user.id) {
             "Cannot issue a JWT for a user that has not been saved."
         }
 
-        // Standard claims describe who issued the token, who it represents, and when it becomes invalid.
+        // Standard claims describe who issued the token, who it represents, and when it becomes invalid
         val claims = JwtClaimsSet.builder()
             .issuer(TOKEN_ISSUER)
             .subject(userId.toString())

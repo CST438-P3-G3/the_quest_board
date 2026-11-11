@@ -17,10 +17,10 @@ class GitHubAuthController(
     private val gitHubAccountService: GitHubAccountService,
     private val jwtTokenService: JwtTokenService
 ) {
-    // Exchanges the code from GitHub for an API token and user details.
+    // Exchanges the code from GitHub for an API token and user details
     @PostMapping("/github")
     fun signIn(@RequestBody request: GitHubSignInRequest): SignInResponse {
-        // Exchange the one time authorization code for a GitHub access token.
+        // Exchange the one time authorization code for a GitHub access token
         val githubAccessToken =
             gitHubOAuthClient.exchangeAuthorizationCode(request)
 

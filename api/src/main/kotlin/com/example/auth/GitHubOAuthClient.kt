@@ -44,7 +44,7 @@ class GitHubOAuthClient(
             .retrieve()
             .body(GitHubTokenResponse::class.java)
 
-        // If GitHub returned an error instead of a token, don't treat sign-in as successful
+        // If GitHub returned an error instead of a token, don't treat sign in as successful
         return tokenResponse?.access_token
             ?: throw GitHubSignInRejectedException("GitHub did not return a user profile")
     }

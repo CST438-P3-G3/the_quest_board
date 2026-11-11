@@ -2,7 +2,7 @@ package com.example.auth.dto
 
 import java.util.UUID
 
-// Represents the successful response from POST /auth/github.
+// Represents the successful response from POST /auth/github
 data class SignInResponse(
     // The short lived token issued by The Quest Board API
     val accessToken: String,
@@ -17,7 +17,7 @@ data class SignInResponse(
     val user: UserSummary
 )
 
-// Public account details returned to the signed-in client.
+// Public account details returned to the signed in client
 
 data class UserSummary(
     // The app's internal user ID, represented as a UUID

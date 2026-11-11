@@ -30,4 +30,24 @@ class GitHubAuthExceptionHandler {
             .contentType(MediaType.valueOf("application/problem+json"))
             .body(problem)
     }
+
+    // Returns 401 when GitHub rejects sign in or the email is not verified
+    @ExceptionHandler(GitHubSignInRejectedException::class)
+    fun handleGitHubSignInRejected(
+        exception: GitHubSignInRejectedException
+    ): ResponseEntity<ProblemDetails> {
+        val status = HttpStatus.UNAUTHORIZED
+
+        val problem = ProblemDetails(
+            type = "https://the-quest-board.example/problems/github-sign-in-rejected",
+            title = "GitHub sign-in rejected",
+            status = status.value(),
+            detail = exception.message
+        )
+
+        return ResponseEntity
+            .status(status)
+            .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+            .body(problem)
+    }
 }
