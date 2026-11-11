@@ -48,6 +48,49 @@ paths:
               schema:
                 $ref: '#/components/schemas/Problem'
 
+    /leaderboard/{household_id}:
+      get:
+        summary: Display the leaderboard for a given household id.
+        description: >-
+          Display the leaderboard for a given household id by getting all task ids for a 
+          given household id, award the points to appropriate users and sort.
+      tags:
+        - User info
+      parameters:
+        - name: household_id
+          in: path
+          required: true
+          description: The ID of the household for which the leaderboard is being requested.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successfully obtained the leaderboard for the given household id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Leaderboard'
+        '403':
+          description: Must be a member of the family or an admin to view the family leaderboard.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Family ID not found.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: The API could not complete sign in because of an unexpected error.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+
 components:
   schemas:
     GitHubSignInRequest:
@@ -110,6 +153,39 @@ components:
           type: string
           format: email
           description: Verified email associated with the signed in account.
+
+    Leaderboard:
+      type: object
+      additionalProperties: false
+      required:
+        - household_id
+        - leaderboard
+      properties:
+        household_id:
+          type: string
+          format: uuid
+          description: The uuid of the household the leaderboard is being retrieved for.
+        leaderboard:
+          type: array
+          description: Household members sorted by their accumulated points, descending
+          items:
+            type: object
+            additionalProperties: false
+            required:
+              - user_id
+              - points
+            properties:
+              user_id:
+                type: string
+                format: uuid
+                description: The uuid of the household member.
+              points:
+                type: integer
+                description: The total points the household member has gathered from completed tasks
+                minimum: 0
+
+
+
 
     Problem:
       type: object
