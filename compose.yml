@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Add POSTGRES_DB to the root .env file}
+      POSTGRES_USER: ${POSTGRES_USER:?Add POSTGRES_USER to the root .env file}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Add POSTGRES_PASSWORD to the root .env file}
+    ports:
+      - "5432:5432"
+    volumes:
+      - quest-board-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Add POSTGRES_DB to the root .env file}
+      POSTGRES_USER: ${POSTGRES_USER:?Add POSTGRES_USER to the root .env file}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Add POSTGRES_PASSWORD to the root .env file}
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/${POSTGRES_DB}"
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:?Add GITHUB_CLIENT_ID to the root .env file}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:?Add GITHUB_CLIENT_SECRET to the root .env file}
+      JWT_SECRET_BASE64: ${JWT_SECRET_BASE64:?Add JWT_SECRET_BASE64 to the root .env file}
+    ports:
+      - "8080:8080"
+
+
+volumes:
+  quest-board-postgres-data:

@@ -1,11 +1,116 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  GitHubSignInButton,
+  type GitHubAuthorization,
+} from '@/components/github-sign-in-button';
+
+// Describes the successful response returned by POST /auth/github
+type SignInApiResponse = {
+  // The Quest Board API's JWT for this signed in user
+  accessToken: string;
+
+  // The authorization scheme the app uses when calling protected API routes
+  tokenType: string;
+
+  // How long the JWT is valid in seconds
+  expiresIn: number;
+
+  // The public account details returned by the API
+  user: {
+    id: string;
+    displayName: string;
+    email: string | null;
+  };
+};
+
+// Describes the problem response returned when signin fails
+type ProblemResponse = {
+  // A short summary of the error
+  title?: string;
+
+  // A more specific explanation such as why GitHub sign in was rejected
+  detail?: string;
+};
 
 export default function TasksScreen() {
   const [tasks, setTasks] = useState<string[]>([]);
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [newTask, setNewTask] = useState('');
+  const [signInMessage, setSignInMessage] = useState('');
+  const [signInResult, setSignInResult] = useState<SignInApiResponse | null>(null);
+
+  // Sends GitHub's authorization details to the API to finish signing in
+  async function handleGitHubAuthorization(
+    authorization: GitHubAuthorization
+  ) {
+    // Clear any previous sign in result before starting another attempt
+    setSignInResult(null);
+
+    // The API needs all three values to exchange the GitHub code securely
+    if (
+      !authorization.code ||
+      !authorization.codeVerifier ||
+      !authorization.redirectUri
+    ) {
+      setSignInMessage('GitHub did not return all the sign in information.');
+      return;
+    }
+
+    // Read the API address from the root .env file
+    const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+
+    // Stop here with a helpful message if the address wasn't configured
+    if (!apiUrl) {
+      setSignInMessage('The API address is missing from the app configuration.');
+      return;
+    }
+
+    // Let the user know the app is contacting the backend
+    setSignInMessage('Finishing sign in...');
+
+    try {
+      // Send the authorization code PKCE verifier and redirect URI to Spring
+      const response = await fetch(
+        `${apiUrl.replace(/\/$/, '')}/auth/github`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json, application/problem+json',
+          },
+          body: JSON.stringify(authorization),
+        }
+      );
+
+      // Convert the API's error response into a message for the screen
+      if (!response.ok) {
+        const problem = (await response.json().catch(() => null)) as
+          | ProblemResponse
+          | null;
+
+        setSignInMessage(
+          problem?.detail ??
+            problem?.title ??
+            `Sign in failed with status ${response.status}.`
+        );
+        return;
+      }
+
+      // Read the JWT and account details returned after successful sign in
+      const result = (await response.json()) as SignInApiResponse;
+
+      // Keep the response in memory and clear the progress/error message
+      setSignInResult(result);
+      setSignInMessage('');
+    } catch {
+      // This usually means the app couldn't connect to the API address
+      setSignInMessage(
+        'Could not reach the API. Check that Docker Compose is running.'
+      );
+    }
+  }
 
   function addTask() {
     const task = newTask.trim();
@@ -20,7 +125,14 @@ export default function TasksScreen() {
     <SafeAreaView style={styles.screen}>
       <View style={styles.content}>
         <Text style={styles.title}>Tasks</Text>
-
+        <GitHubSignInButton onAuthorization={handleGitHubAuthorization} />
+        {/* Show the account name after sign in succeeds, or show progress/errors */}
+        {signInResult ? (
+          <Text>Signed in as {signInResult.user.displayName}.</Text>
+        ) : signInMessage ? (
+          <Text>{signInMessage}</Text>
+        ) : null}
+    
         <Pressable
           accessibilityRole="button"
           onPress={() => setIsAddingTask(true)}
