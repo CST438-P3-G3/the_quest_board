@@ -54,9 +54,17 @@ class SecurityConfig {
     // Defines which browser origins can call the API
     @Bean
     fun corsConfigurationSource(): UrlBasedCorsConfigurationSource {
+        // Render supplies the production web origin through this environment variable.
+        // Keep localhost as the default for local Expo web development.
+        val allowedOriginList = (System.getenv("APP_ALLOWED_ORIGINS")
+            ?: "http://localhost:8081")
+            .split(",")
+            .map(String::trim)
+            .filter(String::isNotEmpty)
+
         val configuration = CorsConfiguration().apply {
-            // Allows the Expo web app during local development
-            allowedOrigins = listOf("http://localhost:8081")
+            // Allows the local and hosted Expo web app origins
+            allowedOrigins = allowedOriginList
 
             // Allows the methods used by the app
             allowedMethods = listOf(
