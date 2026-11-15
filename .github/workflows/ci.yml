@@ -31,6 +31,7 @@ jobs:
           cache: npm
 
       - name: Run backend tests
+        working-directory: api
         run: bash ./gradlew test --no-daemon
 
       - name: Install frontend dependencies
