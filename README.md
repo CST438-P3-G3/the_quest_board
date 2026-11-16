@@ -1,38 +1,133 @@
 # The Quest Board
 
-The Quest Board is a mobile app built with Expo and React Native. It also includes a Spring Boot API and a PostgreSQL database.
+The Quest Board is a mobile app built with Expo and React Native. The API is hosted on Render and the database is hosted on Neon.
+
+The normal setup does not require Docker. Docker is only needed for the optional local database and API setup near the bottom of this guide.
 
 ## What you need
 
 Install these programs before starting:
 
-1. Node.js
-2. Docker Desktop
-3. Git
-4. Android Studio if you want to run the Android app
+1. Git
+2. Node.js
+3. Android Studio if you want to run Android locally
 
 You can also use a physical Android device with USB debugging enabled.
 
 ## Get the project
 
-Open a terminal and run:
+Clone the repository and enter the project folder:
 
 ```text
-git clone https://github.com/CST438-P3-G3/the_quest_board.git
+git clone --branch Carlos/User_API_SetUp --single-branch https://github.com/CST438-P3-G3/the_quest_board.git
 cd the_quest_board
 ```
 
-Install the project packages:
+Install the JavaScript packages:
 
 ```text
-npm install
+npm ci
 ```
 
-## Create the environment file
+If PowerShell reports a permission error for npm use:
 
-Create a file named `.env` in the project root. The project root is the folder that contains `package.json` and `compose.yml`.
+```powershell
+npm.cmd ci
+```
 
-Add the values provided by the project team:
+Run Expo commands from the project root.
+
+## Hosted setup
+
+Create a file named `.env` in the project root. This is the folder that contains `package.json` and `compose.yml`.
+
+For the hosted setup only add the public app values:
+
+```text
+EXPO_PUBLIC_GITHUB_CLIENT_ID=your_github_client_id
+EXPO_PUBLIC_WEB_API_URL=https://quest-board-api-dyln.onrender.com
+EXPO_PUBLIC_NATIVE_API_URL=https://quest-board-api-dyln.onrender.com
+```
+
+The GitHub client ID is safe to use in the app. Never put the GitHub client secret in the Expo app.
+
+Never share `.env` and never commit it to GitHub.
+
+## Run the web app with the hosted API
+
+From the project root run:
+
+```text
+npx expo start --web
+```
+
+Open the address shown by Expo.
+
+## Run Android with the hosted API
+
+Start an Android emulator in Android Studio. Then run:
+
+```text
+npx expo run:android
+```
+
+For a physical Android device connect the device with USB debugging enabled.
+
+The Android app uses this callback:
+
+```text
+project3://auth/callback
+```
+
+The native app must be built after the `project3` scheme is added. Expo Go may not return to this project after GitHub sign in.
+
+## GitHub sign in
+
+The GitHub OAuth callback must match the platform being tested.
+
+For web testing use:
+
+```text
+http://localhost:8081/auth/callback
+```
+
+For a native Android build use:
+
+```text
+project3://auth/callback
+```
+
+After signing in confirm that the app returns from GitHub and shows the signed in user.
+
+## Test the hosted API
+
+The hosted API is available at:
+
+```text
+https://quest-board-api-dyln.onrender.com
+```
+
+Test the health endpoint with PowerShell:
+
+```powershell
+Invoke-RestMethod https://quest-board-api-dyln.onrender.com/health
+```
+
+The result should contain:
+
+```text
+status
+------
+ok
+```
+
+The Render service uses the `Carlos/User_API_SetUp` branch for testing until the changes are merged into `main`.
+
+## Optional local database and API setup
+
+Docker is only needed for this section. Open Docker Desktop before starting.
+
+Create or update the root `.env` file with these local values:
 
 ```text
 POSTGRES_DB=your_database_name
@@ -42,16 +137,9 @@ GITHUB_CLIENT_ID=your_github_client_id
 GITHUB_CLIENT_SECRET=your_github_client_secret
 EXPO_PUBLIC_GITHUB_CLIENT_ID=your_github_client_id
 JWT_SECRET_BASE64=your_base64_secret
-EXPO_PUBLIC_API_URL=http://localhost:8080
+EXPO_PUBLIC_WEB_API_URL=http://localhost:8080
+EXPO_PUBLIC_NATIVE_API_URL=http://10.0.2.2:8080
 ```
-
-Do not share the `.env` file. Do not commit it to GitHub.
-
-The GitHub client ID is used by the app. The GitHub client secret is used only by the API.
-
-## Start the database and API
-
-Make sure Docker Desktop is open.
 
 From the project root run:
 
@@ -59,89 +147,33 @@ From the project root run:
 docker compose up --build
 ```
 
-Keep this terminal open while using the app. The first startup can take several minutes.
-
-The API runs at:
+The local API runs at:
 
 ```text
 http://localhost:8080
 ```
 
-To check that the API is running open this address in a browser:
+Test the local API with PowerShell:
 
-```text
-http://localhost:8080/health
+```powershell
+Invoke-RestMethod http://localhost:8080/health
 ```
 
-You should see:
+The Android emulator uses `http://10.0.2.2:8080` to reach the API on the computer.
 
-```text
-{"status":"ok"}
-```
+For a physical Android device replace that value with the local network address of the computer running Docker. The computer and phone must be on the same network.
 
-## Start the mobile app
-
-Open a second terminal. Go to the project root if needed:
-
-```text
-cd the_quest_board
-```
-
-Start Expo:
-
-```text
-npm start
-```
-
-Use the Expo terminal menu to select an Android emulator or a connected Android device.
-
-You can also start Android directly:
-
-```text
-npm run android
-```
-
-The Expo commands must be run from the project root. Do not run them from the `api` folder.
-
-## Android API connection
-
-When using the Android emulator the app usually needs this API address in `.env`:
-
-```text
-EXPO_PUBLIC_API_URL=http://10.0.2.2:8080
-```
-
-When using the web app use:
-
-```text
-EXPO_PUBLIC_API_URL=http://localhost:8080
-```
-
-When using a physical Android device replace `localhost` with the local network address of the computer running Docker.
-
-## Start the web app
-
-From the project root run:
-
-```text
-npm run web
-```
-
-The web app opens in the browser.
-
-## Stop the API and database
-
-In the terminal running Docker press Control and C. Then run:
+When finished stop the local services:
 
 ```text
 docker compose down
 ```
 
-The database data is stored in a Docker volume so it remains available the next time the project starts.
+The local database data stays in the Docker volume for the next local run.
 
 ## Useful checks
 
-Run the type checker:
+Run the TypeScript check from the project root:
 
 ```text
 npx tsc --noEmit
@@ -150,23 +182,37 @@ npx tsc --noEmit
 Run the Expo lint check:
 
 ```text
-npm run lint
+npx expo lint
+```
+
+Run the backend test command from the API folder:
+
+```text
+cd api
+./gradlew test --no-daemon
+```
+
+On Windows PowerShell use:
+
+```powershell
+cd api
+.\gradlew.bat test --no-daemon
 ```
 
 ## Common problems
 
-### Docker is not running
+### Android cannot reach the API
 
-Open Docker Desktop and run `docker compose up --build` again.
+Use the Render URL for hosted mode. Use `http://10.0.2.2:8080` for an Android emulator with the local API.
 
-### The app cannot reach the API
+### GitHub returns to a redirect page
 
-Check the value of `EXPO_PUBLIC_API_URL`. The Android emulator uses `10.0.2.2`. A physical device uses the computer local network address.
+Confirm that the callback in the GitHub OAuth app matches the platform. Confirm that the Android app was rebuilt after adding the `project3` scheme.
 
-### GitHub sign in does not work
+### Render cannot connect to Neon
 
-Check the GitHub client ID and secret in `.env`. Make sure the GitHub app has permission to read email addresses.
+Confirm that the Render datasource URL starts with `jdbc:postgresql://`. Keep the Neon username and password in their own Render variables. Do not use the full `postgresql://username:password@host` string as the JDBC URL.
 
-### The Android app does not open
+### Docker cannot be reached
 
-Start an Android emulator in Android Studio or connect a physical Android device. Then run `npm run android` from the project root.
+Open Docker Desktop and confirm that the containers are running. Docker is only required for the optional local setup.
