@@ -20,6 +20,9 @@ const redirectUri = AuthSession.makeRedirectUri({
   path: 'auth/callback',
 });
 
+// // Shows the exact redirect URL that GitHub must send users back to.
+// console.log('GitHub redirect URI:', redirectUri);
+
 // GitHub's endpoint where the app opens the sign in and authorization page
 const discovery = {
   authorizationEndpoint: 'https://github.com/login/oauth/authorize',

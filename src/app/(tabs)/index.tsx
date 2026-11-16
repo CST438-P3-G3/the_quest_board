@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   GitHubSignInButton,
@@ -58,8 +58,9 @@ export default function TasksScreen() {
       return;
     }
 
-    // Read the API address from the root .env file
-    const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+    // Web uses localhost
+    // Android emulator uses 10.0.2.2 to reach the computer
+    const apiUrl = Platform.OS === 'web' ? process.env.EXPO_PUBLIC_WEB_API_URL : process.env.EXPO_PUBLIC_NATIVE_API_URL;
 
     // Stop here with a helpful message if the address wasn't configured
     if (!apiUrl) {
