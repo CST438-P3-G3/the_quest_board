@@ -100,7 +100,7 @@ export default function SignInScreen() {
       setMessage(`Welcome, ${result.user.displayName}.`);
 
       // Open the task screen after GitHub authentication succeeds
-      router.replace('/');
+      router.replace('/home');
     } catch {
       setMessage(
         'Could not reach the API. Check your hosted API configuration.'
