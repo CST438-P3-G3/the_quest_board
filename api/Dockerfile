@@ -12,12 +12,12 @@ COPY build.gradle.kts settings.gradle.kts ./
 COPY src ./src
 
 # Build executable Spring Boot JAR
-RUN chmod +x gradlew \
+RUN sed -i 's/\r$//' gradlew \
+    && chmod +x gradlew \
     && ./gradlew bootJar --no-daemon \
     && find build/libs/ -name "*.jar" \
        ! -name "*-plain.jar" \
        -exec cp {} /app/app.jar \;
-
 
 #Runtime stage
 FROM eclipse-temurin:25-jre-jammy

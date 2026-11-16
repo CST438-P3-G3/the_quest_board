@@ -41,6 +41,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
+        '409':
+          description: The verified email is already registered with another provider. The detail names that provider.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
         '500':
           description: The API could not complete sign in because of an unexpected error.
           content:

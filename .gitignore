@@ -54,3 +54,4 @@ build/
 # Windows
 Thumbs.db
 /local.properties
+.neon
