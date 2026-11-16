@@ -1,8 +1,7 @@
-package com.example.questboard.repository
+package com.example.repository
 
-import com.example.questboard.model.Task
-import com.example.questboard.model.User
-import org.springframework.stereotype.Repository;
+import com.example.model.User
+import org.springframework.stereotype.Repository
 import org.springframework.data.repository.CrudRepository
 import java.util.UUID
 

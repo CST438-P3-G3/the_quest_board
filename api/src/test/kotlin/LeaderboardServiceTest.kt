@@ -1,13 +1,13 @@
-package com.example.questboard
+package com.example
 
-import com.example.questboard.controller.LeaderboardController
-import com.example.questboard.model.HouseholdMember
-import com.example.questboard.model.Leaderboard
-import com.example.questboard.model.LeaderboardEntry
-import com.example.questboard.model.Task
-import com.example.questboard.model.TaskCompletion
-import com.example.questboard.model.User
-import com.example.questboard.service.LeaderboardService
+import com.example.controller.LeaderboardController
+import com.example.model.HouseholdMember
+import com.example.model.Leaderboard
+import com.example.model.LeaderboardEntry
+import com.example.model.Task
+import com.example.model.TaskCompletion
+import com.example.model.User
+import com.example.service.LeaderboardService
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,7 +16,6 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpStatus
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.context.bean.override.mockito.MockitoBean

@@ -1,4 +1,4 @@
-package com.example.questboard.model
+package com.example.model
 
 import java.util.UUID
 

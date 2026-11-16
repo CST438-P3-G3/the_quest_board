@@ -1,6 +1,6 @@
-package com.example.questboard.repository
+package com.example.repository
 
-import com.example.questboard.model.HouseholdMember
+import com.example.model.HouseholdMember
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 import java.util.UUID
@@ -9,4 +9,6 @@ import java.util.UUID
 interface HouseholdMemberRepository : CrudRepository<HouseholdMember, UUID> {
     //Allows automatic searching by ID
     fun findAllByHouseholdId(householdId: UUID): List<HouseholdMember>
+
+    fun existsByHouseholdId(householdId: UUID): Boolean
 }

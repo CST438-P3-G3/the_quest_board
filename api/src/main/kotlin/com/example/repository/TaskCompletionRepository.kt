@@ -1,6 +1,6 @@
-package com.example.questboard.repository
+package com.example.repository
 
-import com.example.questboard.model.TaskCompletion
+import com.example.model.TaskCompletion
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 import java.util.UUID

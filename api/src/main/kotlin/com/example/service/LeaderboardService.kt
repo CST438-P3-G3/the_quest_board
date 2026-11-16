@@ -1,11 +1,11 @@
-package com.example.questboard.service
+package com.example.service
 
-import com.example.questboard.model.Leaderboard
-import com.example.questboard.model.LeaderboardEntry
-import com.example.questboard.repository.HouseholdMemberRepository
-import com.example.questboard.repository.TaskCompletionRepository
-import com.example.questboard.repository.TaskRepository
-import com.example.questboard.repository.UserRepository
+import com.example.model.Leaderboard
+import com.example.model.LeaderboardEntry
+import com.example.repository.HouseholdMemberRepository
+import com.example.repository.TaskCompletionRepository
+import com.example.repository.TaskRepository
+import com.example.repository.UserRepository
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
 import org.springframework.security.access.AccessDeniedException
@@ -20,7 +20,7 @@ class LeaderboardService (
 ) {
     fun getLeaderboard(householdId: UUID, currentUser: UUID) : Leaderboard {
         /* If the household ID is correctly formatted but not found, throw a 404 error */
-        if (!householdMemberRepository.existsById(householdId)) {
+        if (!householdMemberRepository.existsByHouseholdId(householdId)) {
             throw ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "Household not found"

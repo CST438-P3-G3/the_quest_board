@@ -1,7 +1,7 @@
-package com.example.questboard.controller
+package com.example.controller
 
-import com.example.questboard.model.Leaderboard
-import com.example.questboard.service.LeaderboardService
+import com.example.model.Leaderboard
+import com.example.service.LeaderboardService
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
