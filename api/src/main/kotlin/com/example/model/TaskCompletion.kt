@@ -2,8 +2,10 @@ package com.example.model
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
+import org.springframework.data.relational.core.mapping.Table
 import java.util.UUID
 
+@Table("TASK_COMPLETION")
 data class TaskCompletion (
     @Id
     val id: UUID,

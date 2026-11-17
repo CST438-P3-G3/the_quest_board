@@ -2,8 +2,10 @@ package com.example.model
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
+import org.springframework.data.relational.core.mapping.Table
 import java.util.UUID
 
+@Table("HOUSEHOLD_MEMBER")
 data class HouseholdMember (
     @Id
     val id: UUID,
