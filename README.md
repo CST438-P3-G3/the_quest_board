@@ -19,7 +19,7 @@ You can also use a physical Android device with USB debugging enabled.
 Clone the repository and enter the project folder:
 
 ```text
-git clone --branch Carlos/User_API_SetUp --single-branch https://github.com/CST438-P3-G3/the_quest_board.git
+git clone https://github.com/CST438-P3-G3/the_quest_board.git
 cd the_quest_board
 ```
 
