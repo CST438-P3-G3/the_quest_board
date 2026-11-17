@@ -69,7 +69,7 @@ class LeaderboardServiceTest {
         fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
             http
                 .authorizeHttpRequests {
-                    it.anyRequest().permitAll()
+                    it.anyRequest().authenticated()
                 }
                 .exceptionHandling {
                     it.authenticationEntryPoint(
