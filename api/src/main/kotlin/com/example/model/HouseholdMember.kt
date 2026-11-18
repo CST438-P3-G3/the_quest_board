@@ -5,7 +5,7 @@ import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import java.util.UUID
 
-@Table("HOUSEHOLD_MEMBER")
+@Table("household_member")
 data class HouseholdMember (
     @Id
     val id: UUID,
