@@ -9,7 +9,6 @@ export type Organization = {
   id: string;
   name: string;
   description: string;
-  websiteUrl: string | null;
   role: string;
   createdAt: string;
 };
@@ -67,6 +66,6 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 
 export function getOrganizations() { return request<Organization[]>('/organizations'); }
 
-export function createOrganization(values: { name: string; description: string; websiteUrl: string | null }) {
+export function createOrganization(values: { name: string; description: string }) {
   return request<Organization>('/organizations', { method: 'POST', body: JSON.stringify(values) });
 }

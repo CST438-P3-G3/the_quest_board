@@ -40,7 +40,6 @@ export default function OrgsScreen() {
         <View style={styles.list}>{organizations.map((org) => <View key={org.id} style={styles.card}>
           <View style={styles.cardHeading}><Text style={styles.orgName}>{org.name}</Text><Text style={styles.role}>{org.role.toLowerCase()}</Text></View>
           {org.description ? <Text style={styles.description}>{org.description}</Text> : null}
-          {org.websiteUrl ? <Text style={styles.website}>{org.websiteUrl}</Text> : null}
         </View>)}</View>
       </ScrollView>
     </SafeAreaView>
@@ -61,7 +60,7 @@ const styles = StyleSheet.create({
   cardHeading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
   orgName: { flex: 1, color: '#0f172a', fontSize: 18, fontWeight: '700' },
   role: { color: '#1d4ed8', backgroundColor: '#eff6ff', overflow: 'hidden', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4, fontSize: 12, fontWeight: '700' },
-  description: { color: '#475569', fontSize: 15, lineHeight: 22 }, website: { color: '#2563eb', fontSize: 14 },
+  description: { color: '#475569', fontSize: 15, lineHeight: 22 },
   emptyCard: { alignItems: 'center', gap: 8, borderRadius: 14, backgroundColor: '#fff', borderWidth: 1, borderColor: '#e2e8f0', padding: 26 },
   emptyTitle: { color: '#0f172a', fontSize: 18, fontWeight: '700' }, emptyText: { color: '#64748b', textAlign: 'center', lineHeight: 22 },
   error: { color: '#b91c1c', backgroundColor: '#fef2f2', borderRadius: 10, padding: 12 },

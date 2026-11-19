@@ -7,7 +7,6 @@ import { createOrganization } from '@/api';
 export default function CreateOrgScreen() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [websiteUrl, setWebsiteUrl] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -15,11 +14,9 @@ export default function CreateOrgScreen() {
     const cleanName = name.trim();
     if (!cleanName) { setError('Enter an organization name.'); return; }
     if (cleanName.length > 120) { setError('Organization names must be 120 characters or fewer.'); return; }
-    const cleanWebsite = websiteUrl.trim();
-    if (cleanWebsite && !/^https?:\/\//i.test(cleanWebsite)) { setError('Website must start with https:// or http://.'); return; }
     setSaving(true); setError('');
     try {
-      await createOrganization({ name: cleanName, description: description.trim(), websiteUrl: cleanWebsite || null });
+      await createOrganization({ name: cleanName, description: description.trim() });
       router.replace('/(tabs)/orgs' as never);
     } catch (cause) { setError(cause instanceof Error ? cause.message : 'Could not create the organization.'); }
     finally { setSaving(false); }
@@ -35,8 +32,6 @@ export default function CreateOrgScreen() {
         <TextInput accessibilityLabel="Organization name" autoCapitalize="words" maxLength={120} onChangeText={setName} placeholder="e.g. Quest Club" placeholderTextColor="#94a3b8" style={styles.input} value={name} />
         <Text style={styles.label}>Description</Text>
         <TextInput accessibilityLabel="Description" multiline maxLength={1000} onChangeText={setDescription} placeholder="What is this organization about?" placeholderTextColor="#94a3b8" style={[styles.input, styles.multiline]} value={description} />
-        <Text style={styles.label}>Website (optional)</Text>
-        <TextInput accessibilityLabel="Website" autoCapitalize="none" autoCorrect={false} keyboardType="url" maxLength={300} onChangeText={setWebsiteUrl} placeholder="https://example.com" placeholderTextColor="#94a3b8" style={styles.input} value={websiteUrl} />
         {error ? <Text accessibilityRole="alert" style={styles.error}>{error}</Text> : null}
         {error.toLowerCase().includes('sign in again') ? <Pressable accessibilityRole="button" onPress={() => router.replace('/log-in')}><Text style={styles.signIn}>Sign in again</Text></Pressable> : null}
         <Pressable accessibilityRole="button" disabled={saving} onPress={() => void submit()} style={({ pressed }) => [styles.saveButton, (pressed || saving) && styles.dimmed]}>
