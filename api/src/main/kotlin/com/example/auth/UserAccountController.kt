@@ -2,6 +2,7 @@ package com.example.auth
 
 import com.example.auth.dto.UpdateUserAccountRequest
 import com.example.auth.dto.UserAccountResponse
+import com.example.model.AppUser
 import org.springframework.http.HttpStatus
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -58,7 +59,7 @@ class UserAccountController(
     }
 
     // Converts the database entity into a safe API response
-    private fun com.example.auth.entity.AppUser.toAccountResponse(): UserAccountResponse {
+    private fun AppUser.toAccountResponse(): UserAccountResponse {
         return UserAccountResponse(
             id = requireNotNull(id),
             displayName = displayName,
