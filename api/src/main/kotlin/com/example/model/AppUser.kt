@@ -1,4 +1,4 @@
-package com.example.auth.entity
+package com.example.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

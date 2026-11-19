@@ -1,6 +1,6 @@
 package com.example.auth
 
-import com.example.auth.entity.AppUser
+import com.example.model.AppUser
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm
 import org.springframework.security.oauth2.jwt.JwtClaimsSet
 import org.springframework.security.oauth2.jwt.JwtEncoder

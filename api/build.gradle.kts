@@ -23,23 +23,30 @@ repositories {
 }
 
 dependencies {
+    // Web and JSON
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webmvc")
+    implementation("org.springframework.boot:spring-boot-starter-mustache")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    // This provides JPA entities and respositories for storing app users and OAuth identities
+
+    // Database
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    // This adds support for validating JWT bearer tokens on protected API routes
-    implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
-    // Runs versioned SQL migrations to create and update the database schema
-    implementation("org.springframework.boot:spring-boot-starter-flyway")
-
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-
-    // Provides the PostgreSQL driver when the API connects to the database at runtime
     runtimeOnly("org.postgresql:postgresql")
 
-    // Adds Flyway's PostgreSQL support
+    // Security and authentication
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
+
+    // Database migrations
+    implementation("org.springframework.boot:spring-boot-starter-flyway")
     runtimeOnly("org.flywaydb:flyway-database-postgresql")
+
+    // Testing
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+    testImplementation("org.springframework.security:spring-security-test")
 }
 
 kotlin {

@@ -1,48 +1,200 @@
 openapi: 3.1.0
+
 info:
   title: The Quest Board API
   version: 1.0.0
-  description: Initial API contract for the Sprint 1 GitHub sign in vertical slice.
+  description: API contract for authentication and account management.
 
 paths:
   /auth/github:
     post:
       operationId: signInWithGitHub
       summary: Sign in with GitHub
-      description: >-
-        Exchanges the GitHub authorization code obtained by the client using
-        Authorization Code with PKCE. The API verifies the GitHub identity and
-        returns the app's own short lived access token. Provider client secrets
-        are held by the API and are never sent by the client.
       tags:
         - Authentication
+
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/GitHubSignInRequest'
+
       responses:
         '200':
-          description: GitHub identity verified and app session created.
+          description: GitHub sign-in succeeded.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SignInResponse'
+
         '400':
-          description: Request is missing required fields or is malformed.
+          description: The request is invalid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+        '401':
+          description: GitHub rejected the sign-in request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+        '409':
+          description: The email is already registered with another provider.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /user/me:
+    get:
+      operationId: getCurrentUser
+      summary: View the current user's profile
+      tags:
+        - Account
+      security:
+        - bearerAuth: []
+
+      responses:
+        '200':
+          description: The current user's profile.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAccountResponse'
+
+        '401':
+          description: Authentication is required.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+        '404':
+          description: The account could not be found.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+    patch:
+      operationId: updateCurrentUser
+      summary: Update the current user's profile
+      tags:
+        - Account
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserAccountRequest'
+
+      responses:
+        '200':
+          description: The profile was updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAccountResponse'
+
+        '400':
+          description: The display name is missing or invalid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+        '401':
+          description: Authentication is required.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+        '404':
+          description: The account could not be found.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /users/me:
+    delete:
+      operationId: deleteCurrentUser
+      summary: Delete the current user's account
+      tags:
+        - Account
+      security:
+        - bearerAuth: []
+
+      responses:
+        '204':
+          description: The account was deleted successfully.
+
+        '401':
+          description: Authentication is required.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+        '404':
+          description: The account could not be found.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+    /leaderboard/{householdId}:
+      get:
+        summary: Display the leaderboard for a given household id.
+        description: >-
+          Display the leaderboard for a given household id by getting all task ids for a 
+          given household id, award the points to appropriate users and sort.
+      tags:
+        - User info
+      parameters:
+        - name: household_id
+          in: path
+          required: true
+          description: The ID of the household for which the leaderboard is being requested.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successfully obtained the leaderboard for the given household id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Leaderboard'
+        '400':
+          description: Bad request, not a validly formatted household ID.
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
         '401':
-          description: GitHub rejected the authorization code or the email is unverified.
+          description:
+            Unauthorized, user must be signed in
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
-        '409':
-          description: The verified email is already registered with another provider. The detail names that provider.
+        '403':
+          description: Must be a member of the household or an admin to view the household leaderboard.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Household ID not found.
           content:
             application/problem+json:
               schema:
@@ -54,7 +206,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Problem'
 
+
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     GitHubSignInRequest:
       type: object
@@ -67,15 +226,17 @@ components:
         code:
           type: string
           minLength: 1
-          description: One time authorization code returned by GitHub to the client.
+          description: One-time authorization code returned by GitHub.
+
         codeVerifier:
           type: string
           minLength: 1
-          description: PKCE verifier paired with the challenge in the authorization request.
+          description: PKCE verifier paired with the authorization request.
+
         redirectUri:
           type: string
           format: uri
-          description: Redirect URI used for the GitHub authorization request.
+          description: Redirect URI used during GitHub sign-in.
 
     SignInResponse:
       type: object
@@ -88,14 +249,17 @@ components:
       properties:
         accessToken:
           type: string
-          description: Short lived JWT issued by The Quest Board API.
+          description: Short-lived JWT issued by The Quest Board API.
+
         tokenType:
           type: string
           const: Bearer
+
         expiresIn:
           type: integer
           minimum: 1
-          description: Access token lifetime in seconds.
+          description: Token lifetime in seconds.
+
         user:
           $ref: '#/components/schemas/UserSummary'
 
@@ -109,31 +273,112 @@ components:
         id:
           type: string
           format: uuid
+
         displayName:
           type: string
           minLength: 1
+          maxLength: 120
+
         email:
           type: string
           format: email
-          description: Verified email associated with the signed in account.
+          nullable: true
+
+    UserAccountResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - displayName
+        - email
+        - accountType
+      properties:
+        id:
+          type: string
+          format: uuid
+
+        displayName:
+          type: string
+          minLength: 1
+          maxLength: 120
+
+        email:
+          type: string
+          format: email
+
+        accountType:
+          type: string
+          example: Family member
+
+    UpdateUserAccountRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - displayName
+      properties:
+        displayName:
+          type: string
+          minLength: 1
+          maxLength: 120
+
+    Leaderboard:
+      type: object
+      additionalProperties: false
+      required:
+        - household_id
+        - leaderboard
+      properties:
+        household_id:
+          type: string
+          format: uuid
+          description: The uuid of the household the leaderboard is being retrieved for.
+        leaderboard:
+          type: array
+          description: Household members sorted by their accumulated points, descending
+          items:
+            type: object
+            additionalProperties: false
+            required:
+              - user_id
+              - username
+              - points
+            properties:
+              user_id:
+                type: string
+                format: uuid
+                description: The uuid of the household member.
+              username:
+                type: string
+                description: The username of the household member.
+              points:
+                type: integer
+                description: The total points the household member has gathered from completed tasks
+                minimum: 0
+
+
+
 
     Problem:
       type: object
       description: RFC 9457 Problem Details response.
-      properties:
-        type:
-          type: string
-          format: uri-reference
-        title:
-          type: string
-        status:
-          type: integer
-        detail:
-          type: string
-        instance:
-          type: string
-          format: uri-reference
       required:
         - type
         - title
         - status
+      properties:
+        type:
+          type: string
+          format: uri-reference
+
+        title:
+          type: string
+
+        status:
+          type: integer
+
+        detail:
+          type: string
+
+        instance:
+          type: string
+          format: uri-reference

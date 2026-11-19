@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { setAccessToken } from '@/api';
+import { useAuth } from '@/context/auth-context'
 
 import {
   GitHubSignInButton,
@@ -34,6 +35,7 @@ type ProblemResponse = {
 export default function SignInScreen() {
   const [mode, setMode] = useState<'signIn' | 'signUp'>('signIn');
   const [message, setMessage] = useState('');
+  const { signIn } = useAuth()
 
   // Sends the GitHub authorization details to the hosted API
   async function handleGitHubAuthorization(
@@ -98,6 +100,9 @@ export default function SignInScreen() {
       // Read the successful response from the API
       const result = (await response.json()) as SignInApiResponse;
       await setAccessToken(result.accessToken);
+
+      // Save the JWT and user information for the rest of the app
+      await signIn(result.accessToken, result.user)
 
       setMessage(`Welcome, ${result.user.displayName}.`);
 
