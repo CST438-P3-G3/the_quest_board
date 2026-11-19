@@ -1,6 +1,6 @@
 package com.example.auth
 
-import com.example.auth.entity.AppUser
+import com.example.model.AppUser
 import com.example.auth.entity.OAuthIdentity
 import com.example.auth.repository.AppUserRepository
 import com.example.auth.repository.OAuthIdentityRepository
