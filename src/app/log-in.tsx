@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { setAccessToken } from '@/api';
 
 import {
   GitHubSignInButton,
@@ -96,6 +97,7 @@ export default function SignInScreen() {
 
       // Read the successful response from the API
       const result = (await response.json()) as SignInApiResponse;
+      await setAccessToken(result.accessToken);
 
       setMessage(`Welcome, ${result.user.displayName}.`);
 
