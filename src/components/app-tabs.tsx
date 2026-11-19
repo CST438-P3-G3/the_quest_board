@@ -52,6 +52,19 @@ export default function AppTabs() {
           md="person"
         />
       </NativeTabs.Trigger>
+
+      {/* Leaderboard tab */}
+      <NativeTabs.Trigger name="leaderboard">
+        <NativeTabs.Trigger.Label>
+          Leaderboard
+        </NativeTabs.Trigger.Label>
+
+        <NativeTabs.Trigger.Icon
+          sf="trophy"
+          md="emoji_events"
+        />
+      </NativeTabs.Trigger>
+
     </NativeTabs>
   );
 }
