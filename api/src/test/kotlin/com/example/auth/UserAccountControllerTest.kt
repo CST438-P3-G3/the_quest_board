@@ -1,6 +1,6 @@
 package com.example.auth
 
-import com.example.auth.entity.AppUser
+import com.example.model.AppUser
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
