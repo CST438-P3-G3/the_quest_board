@@ -78,7 +78,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Leaderboard'
         '400':
-          description: Bad request, not a validly formatted family ID.
+          description: Bad request, not a validly formatted household ID.
           content:
             application/problem+json:
               schema:
@@ -91,13 +91,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Problem'
         '403':
-          description: Must be a member of the family or an admin to view the family leaderboard.
+          description: Must be a member of the household or an admin to view the household leaderboard.
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
         '404':
-          description: Family ID not found.
+          description: Household ID not found.
           content:
             application/problem+json:
               schema:
