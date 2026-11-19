@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { use_Auth } from '../../../context/AuthContext';
+import { useAuth } from '@/context/auth-context';
 
 interface Household {
   id: string;
@@ -18,7 +18,7 @@ interface Household {
 
 export default function HouseholdSelectionScreen() {
   const router = useRouter();
-  const { user } = use_Auth();
+  const { accessToken, isLoading: authLoading } = useAuth();
 
   const [households, setHouseholds] = useState<Household[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,7 +36,7 @@ export default function HouseholdSelectionScreen() {
           {
             method: 'GET',
             headers: {
-              Authorization: `Bearer ${user.token}`,
+              Authorization: `Bearer ${accessToken}`,
               'Content-Type': 'application/json',
             },
           }
@@ -58,10 +58,12 @@ export default function HouseholdSelectionScreen() {
       }
     };
 
-    if (user?.token) {
+    if (accessToken) {
       fetchHouseholds();
+    } else {
+      setLoading(false);
     }
-  }, [user?.token]);
+    }, [accessToken]);
 
   // Navigate to leaderboard with selected household ID
   const householdSelection = (household: Household) => {

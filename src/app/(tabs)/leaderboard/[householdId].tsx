@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { use_Auth } from '../../../../context/AuthContext';
+import { useAuth } from '@/context/auth-context';
 import { useLocalSearchParams } from 'expo-router';
 
 
@@ -23,7 +23,7 @@ interface LeaderboardResponse {
 }
 
 export default function LeaderboardScreen() {
-  const { user } = use_Auth();
+  const { accessToken, isLoading: authLoading } = useAuth();
 
   // Retrieve the household ID from the URL
   const { householdId } = useLocalSearchParams<{
@@ -46,7 +46,7 @@ export default function LeaderboardScreen() {
           {
             method: 'GET',
             headers: {
-              Authorization: `Bearer ${user.token}`,
+              Authorization: `Bearer ${accessToken}`,
               'Content-Type': 'application/json',
             },
           }
@@ -74,13 +74,13 @@ export default function LeaderboardScreen() {
     };
 
     // Fetch only when household ID and authentication token are available
-    if (householdId && user?.token) {
+    if (householdId && accessToken) {
       fetchLeaderboard();
     } else {
       setLoading(false);
     }
 
-  }, [householdId, user?.token]);
+  }, [householdId, accessToken]);
 
   // Loading state
   if (loading) {
@@ -106,7 +106,7 @@ export default function LeaderboardScreen() {
   }
 
   // No household or authentication
-  if (!householdId || !user?.token) {
+  if (!householdId || !accessToken) {
     return (
       <SafeAreaView style={styles.screen}>
         <Text style={styles.message}>
