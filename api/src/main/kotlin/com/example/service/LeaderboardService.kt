@@ -9,9 +9,11 @@ import com.example.auth.repository.AppUserRepository
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
 import org.springframework.security.access.AccessDeniedException
+import org.springframework.stereotype.Service
 import java.util.UUID
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 
+@Service
 class LeaderboardService(
     private val householdMemberRepository: HouseholdMemberRepository,
     private val taskRepository: TaskRepository,
