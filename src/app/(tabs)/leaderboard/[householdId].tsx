@@ -219,6 +219,7 @@ export default function LeaderboardScreen() {
     </SafeAreaView>
   );
 }
+}
 
 const styles = StyleSheet.create({
   screen: {
