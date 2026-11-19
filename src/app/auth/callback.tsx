@@ -14,7 +14,7 @@ export default function GitHubCallbackRoute() {
       router.back();
     } else {
       // Use Home if the app opened directly to the callback with no history
-      router.replace('/');
+      router.replace('/(tabs)/home');
     }
   }, []);
 
