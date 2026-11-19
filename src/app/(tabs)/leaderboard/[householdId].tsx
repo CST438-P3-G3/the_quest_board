@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   StyleSheet,
   Text,
   View,
-  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { use_Auth } from '../context/AuthContext';
+import { use_Auth } from '../../../context/AuthContext';
 import { useLocalSearchParams } from 'expo-router';
 
 interface LeaderboardEntry {
@@ -16,19 +16,24 @@ interface LeaderboardEntry {
   totalScore: number;
 }
 
-export default function LeaderboardScreen({ route }: any) {
-  export default function LeaderboardScreen() {
-    const { user } = use_Auth();
+interface LeaderboardResponse {
+  householdId: string;
+  leaderboard: LeaderboardEntry[];
+}
 
-    const { householdId } = useLocalSearchParams<{
-      householdId: string;
-    }>();
+export default function LeaderboardScreen() {
+  const { user } = use_Auth();
+
+  // Retrieve the household ID from the URL
+  const { householdId } = useLocalSearchParams<{
+    householdId: string;
+  }>();
 
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  //Fetches the leaderboard for the household Id
+  // Fetch leaderboard for the selected household
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
@@ -50,11 +55,14 @@ export default function LeaderboardScreen({ route }: any) {
           throw new Error(`Request failed: ${response.status}`);
         }
 
-        const data: LeaderboardEntry[] = await response.json();
+        const data: LeaderboardResponse = await response.json();
 
-        data.sort((a, b) => b.totalScore - a.totalScore);
+        // Sort members by score, highest first
+        const sortedLeaderboard = [...data.leaderboard].sort(
+          (a, b) => b.totalScore - a.totalScore
+        );
 
-        setLeaderboard(data);
+        setLeaderboard(sortedLeaderboard);
 
       } catch (err) {
         console.error('Error fetching leaderboard:', err);
@@ -64,28 +72,44 @@ export default function LeaderboardScreen({ route }: any) {
       }
     };
 
-    //Fetch the leaderboard only if a householdId and auth token are present
+    // Fetch only when household ID and authentication token are available
     if (householdId && user?.token) {
       fetchLeaderboard();
+    } else {
+      setLoading(false);
     }
+
   }, [householdId, user?.token]);
 
+  // Loading state
   if (loading) {
     return (
       <SafeAreaView style={styles.screen}>
         <ActivityIndicator size="large" color="#2563eb" />
-        <Text style={{ textAlign: 'center', marginTop: 12 }}>
+        <Text style={styles.message}>
           Loading leaderboard...
         </Text>
       </SafeAreaView>
     );
   }
 
+  // Error state
   if (error) {
     return (
       <SafeAreaView style={styles.screen}>
-        <Text style={{ textAlign: 'center', marginTop: 40 }}>
+        <Text style={styles.message}>
           {error}
+        </Text>
+      </SafeAreaView>
+    );
+  }
+
+  // No household or authentication
+  if (!householdId || !user?.token) {
+    return (
+      <SafeAreaView style={styles.screen}>
+        <Text style={styles.message}>
+          Unable to load leaderboard. Missing household or authentication.
         </Text>
       </SafeAreaView>
     );
@@ -95,91 +119,105 @@ export default function LeaderboardScreen({ route }: any) {
   const remainingMembers = leaderboard.slice(3);
 
   return (
-      <SafeAreaView style={styles.screen}>
-        <FlatList
-          data={remainingMembers}
-          keyExtractor={(item) => item.userId}
-          contentContainerStyle={styles.listContent}
-          ListHeaderComponent={
-            <View>
-              <Text style={styles.title}>Leaderboard</Text>
-              <Text style={styles.subtitle}>
-                See how your household is doing!
-              </Text>
+    <SafeAreaView style={styles.screen}>
+      <FlatList
+        data={remainingMembers}
+        keyExtractor={(item) => item.userId}
+        contentContainerStyle={styles.listContent}
+        ListHeaderComponent={
+          <View>
+            <Text style={styles.title}>Leaderboard</Text>
 
-              {/* Top three podium */}
-              <View style={styles.podium}>
-                {/* Second place */}
-                <View style={styles.podiumColumn}>
-                  <Text style={styles.medal}>🥈</Text>
-                  <Text style={styles.podiumName}>
-                    {topThree[1]?.username ?? '-'}
-                  </Text>
-                  <Text style={styles.podiumScore}>
-                    {topThree[1]?.totalScore ?? 0} pts
-                  </Text>
-                  <View style={[styles.podiumBlock, styles.secondPlace]}>
-                    <Text style={styles.podiumRank}>2</Text>
-                  </View>
-                </View>
+            <Text style={styles.subtitle}>
+              See how your household is doing!
+            </Text>
 
-                {/* First place */}
-                <View style={styles.podiumColumn}>
-                  <Text style={styles.medal}>🥇</Text>
-                  <Text style={styles.podiumName}>
-                    {topThree[0]?.username ?? '-'}
-                  </Text>
-                  <Text style={styles.podiumScore}>
-                    {topThree[0]?.totalScore ?? 0} pts
-                  </Text>
-                  <View style={[styles.podiumBlock, styles.firstPlace]}>
-                    <Text style={styles.podiumRank}>1</Text>
-                  </View>
-                </View>
+            {/* Top three podium */}
+            <View style={styles.podium}>
 
-                {/* Third place */}
-                <View style={styles.podiumColumn}>
-                  <Text style={styles.medal}>🥉</Text>
-                  <Text style={styles.podiumName}>
-                    {topThree[2]?.username ?? '-'}
-                  </Text>
-                  <Text style={styles.podiumScore}>
-                    {topThree[2]?.totalScore ?? 0} pts
-                  </Text>
-                  <View style={[styles.podiumBlock, styles.thirdPlace]}>
-                    <Text style={styles.podiumRank}>3</Text>
-                  </View>
+              {/* Second place */}
+              <View style={styles.podiumColumn}>
+                <Text style={styles.medal}>🥈</Text>
+
+                <Text style={styles.podiumName}>
+                  {topThree[1]?.username ?? '-'}
+                </Text>
+
+                <Text style={styles.podiumScore}>
+                  {topThree[1]?.totalScore ?? 0} pts
+                </Text>
+
+                <View style={[styles.podiumBlock, styles.secondPlace]}>
+                  <Text style={styles.podiumRank}>2</Text>
                 </View>
               </View>
 
-              <Text style={styles.sectionTitle}>
-                All rankings
-              </Text>
-            </View>
-          }
-          renderItem={({ item, index }) => (
-            <View style={styles.memberRow}>
-              <Text style={styles.memberRank}>
-                #{index + 4}
-              </Text>
+              {/* First place */}
+              <View style={styles.podiumColumn}>
+                <Text style={styles.medal}>🥇</Text>
 
-              <Text style={styles.memberName}>
-                {item.username}
-              </Text>
+                <Text style={styles.podiumName}>
+                  {topThree[0]?.username ?? '-'}
+                </Text>
 
-              <Text style={styles.memberScore}>
-                {item.totalScore} pts
-              </Text>
+                <Text style={styles.podiumScore}>
+                  {topThree[0]?.totalScore ?? 0} pts
+                </Text>
+
+                <View style={[styles.podiumBlock, styles.firstPlace]}>
+                  <Text style={styles.podiumRank}>1</Text>
+                </View>
+              </View>
+
+              {/* Third place */}
+              <View style={styles.podiumColumn}>
+                <Text style={styles.medal}>🥉</Text>
+
+                <Text style={styles.podiumName}>
+                  {topThree[2]?.username ?? '-'}
+                </Text>
+
+                <Text style={styles.podiumScore}>
+                  {topThree[2]?.totalScore ?? 0} pts
+                </Text>
+
+                <View style={[styles.podiumBlock, styles.thirdPlace]}>
+                  <Text style={styles.podiumRank}>3</Text>
+                </View>
+              </View>
+
             </View>
-          )}
-          ListEmptyComponent={
-            <Text style={styles.emptyText}>
-              No additional household members.
+
+            <Text style={styles.sectionTitle}>
+              All rankings
             </Text>
-          }
-        />
-      </SafeAreaView>
-    );
+          </View>
+        }
+
+        renderItem={({ item, index }) => (
+          <View style={styles.memberRow}>
+            <Text style={styles.memberRank}>
+              #{index + 4}
+            </Text>
+
+            <Text style={styles.memberName}>
+              {item.username}
+            </Text>
+
+            <Text style={styles.memberScore}>
+              {item.totalScore} pts
+            </Text>
+          </View>
+        )}
+
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>
+            No additional household members.
+          </Text>
+        }
+      />
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -289,8 +327,13 @@ const styles = StyleSheet.create({
     color: '#2563eb',
   },
   emptyText: {
-    color: '#64748b',
     textAlign: 'center',
     marginTop: 10,
+    color: '#64748b'
+  },
+  message: {
+    textAlign: 'center',
+    marginTop: 20,
+    color: '#64748b',
   },
 });

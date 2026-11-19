@@ -110,7 +110,7 @@ export default function HouseholdSelectionScreen() {
           renderItem={({ item }) => (
             <Pressable
               style={styles.householdCard}
-              onPress={() => handleHouseholdSelection(item)}
+              onPress={() => householdSelection(item)}
             >
               <Text style={styles.householdName}>
                 {item.name}
@@ -123,7 +123,7 @@ export default function HouseholdSelectionScreen() {
           )}
           ListEmptyComponent={
             <Text style={styles.emptyText}>
-              You don't belong to any households yet.
+              You don't belong to any households yet. Try joining one!
             </Text>
           }
         />
