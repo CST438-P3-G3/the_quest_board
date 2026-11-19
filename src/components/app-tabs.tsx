@@ -29,15 +29,15 @@ export default function AppTabs() {
         />
       </NativeTabs.Trigger>
 
-      {/* Explore tab */}
-      <NativeTabs.Trigger name="explore">
+      {/* Organizations tab */}
+      <NativeTabs.Trigger name="orgs">
         <NativeTabs.Trigger.Label>
-          Explore
+          Orgs
         </NativeTabs.Trigger.Label>
 
         <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/explore.png')}
-          renderingMode="template"
+          sf="building.2"
+          md="groups"
         />
       </NativeTabs.Trigger>
 

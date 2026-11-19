@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { setAccessToken } from '@/api';
 import { useAuth } from '@/context/auth-context'
 
 import {
@@ -98,6 +99,7 @@ export default function SignInScreen() {
 
       // Read the successful response from the API
       const result = (await response.json()) as SignInApiResponse;
+      await setAccessToken(result.accessToken);
 
       // Save the JWT and user information for the rest of the app
       await signIn(result.accessToken, result.user)
