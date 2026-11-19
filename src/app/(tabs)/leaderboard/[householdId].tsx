@@ -7,8 +7,9 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { use_Auth } from '../../../context/AuthContext';
+import { use_Auth } from '../../../../context/AuthContext';
 import { useLocalSearchParams } from 'expo-router';
+
 
 interface LeaderboardEntry {
   userId: string;
