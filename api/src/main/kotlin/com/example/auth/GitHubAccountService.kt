@@ -1,9 +1,9 @@
 package com.example.auth
 
-import com.example.auth.entity.AppUser
 import com.example.auth.entity.OAuthIdentity
 import com.example.auth.repository.AppUserRepository
 import com.example.auth.repository.OAuthIdentityRepository
+import com.example.model.AppUser
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

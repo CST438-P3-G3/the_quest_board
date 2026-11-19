@@ -5,20 +5,20 @@ import com.example.model.LeaderboardEntry
 import com.example.repository.HouseholdMemberRepository
 import com.example.repository.TaskCompletionRepository
 import com.example.repository.TaskRepository
-import com.example.repository.UserRepository
+import com.example.auth.repository.AppUserRepository
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
 import org.springframework.security.access.AccessDeniedException
 import java.util.UUID
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 
-class LeaderboardService (
+class LeaderboardService(
     private val householdMemberRepository: HouseholdMemberRepository,
     private val taskRepository: TaskRepository,
     private val taskCompletionRepository: TaskCompletionRepository,
-    private val userRepository: UserRepository
+    private val userRepository: AppUserRepository
 ) {
-    fun getLeaderboard(householdId: UUID, currentUser: UUID) : Leaderboard {
+    fun getLeaderboard(householdId: UUID, currentUser: UUID): Leaderboard {
         /* If the household ID is correctly formatted but not found, throw a 404 error */
         if (!householdMemberRepository.existsByHouseholdId(householdId)) {
             throw ResponseStatusException(
@@ -29,33 +29,31 @@ class LeaderboardService (
 
         val members = householdMemberRepository.findAllByHouseholdId(householdId).toList()
         val tasks = taskRepository.findAllByHouseholdId(householdId).toList()
-        val taskIds = tasks.map {it.id}
+        val taskIds = tasks.map { it.id }
 
         /* If the household ID is found but the user is not in the household and is not an admin, throw a 403 error */
         val isMember = members.any {
             it.userId == currentUser
         }
+
         val user = userRepository.findById(currentUser)
             .orElseThrow {
                 UsernameNotFoundException("User not found")
             }
 
-        //The implementation of checking the systemRole here is a placeholder and may
-        //need to be updated once the actual security details are known.
         if (!isMember && user.systemRole != "ADMIN") {
             throw AccessDeniedException(
                 "Not authorized to view this leaderboard."
             )
         }
 
-        val completions = if(taskIds.isEmpty()){
+        val completions = if (taskIds.isEmpty()) {
             emptyList()
-        }
-        else{
+        } else {
             taskCompletionRepository.findAllByTaskIdIn(taskIds)
         }
 
-        //Aggregate points and group by user
+        // Aggregate points and group by user
         val pointsByUser = completions.groupingBy { it.completedByUserId }.fold(0)
         { total, completion -> total + completion.pointsAwarded }
 
@@ -63,7 +61,7 @@ class LeaderboardService (
         val users = userRepository.findAllById(userIds)
             .associateBy { it.id }
 
-        //Create leaderboard entries with users, their display names, and corresponding points. Defaults 0 if null
+        // Create leaderboard entries with users, their display names, and corresponding points. Defaults to 0 if null
         val leaderboardEntries = members.map { member ->
             val user = requireNotNull(users[member.userId]) {
                 "User ${member.userId} was not found"

@@ -1,12 +1,12 @@
 package com.example
 
 import com.example.controller.LeaderboardController
+import com.example.model.AppUser
 import com.example.model.HouseholdMember
 import com.example.model.Leaderboard
 import com.example.model.LeaderboardEntry
 import com.example.model.Task
 import com.example.model.TaskCompletion
-import com.example.model.User
 import com.example.service.LeaderboardService
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -39,10 +39,10 @@ class LeaderboardServiceTest {
 
     @MockitoBean
     private lateinit var leaderboardService: LeaderboardService
-    private lateinit var mockUser1: User
-    private lateinit var mockUser2: User
-    private lateinit var mockUser3: User
-    private lateinit var mockUser4: User
+    private lateinit var mockUser1: AppUser
+    private lateinit var mockUser2: AppUser
+    private lateinit var mockUser3: AppUser
+    private lateinit var mockUser4: AppUser
     private lateinit var mockHouseholdMember1: HouseholdMember
     private lateinit var mockHouseholdMember2: HouseholdMember
     private lateinit var mockHouseholdMember3: HouseholdMember
@@ -89,11 +89,11 @@ class LeaderboardServiceTest {
     //Set up mock users, tasks, and household members, which are used in all tests
     @BeforeEach
     fun setUp() {
-        //Create mock users
-        mockUser1 = User(mockUuid(1), "emailUser1", true, "User1", "ADMIN")
-        mockUser2 = User(mockUuid(2), "emailUser2", true, "User2", "USER")
-        mockUser3 = User(mockUuid(3), "emailUser3", true, "User3", "USER")
-        mockUser4 = User(mockUuid(4), "emailUser4", true, "User4", "USER")
+        // Create mock users
+        mockUser1 = AppUser(mockUuid(1), "emailUser1", true, "User1", "ADMIN")
+        mockUser2 = AppUser(mockUuid(2), "emailUser2", true, "User2", "USER")
+        mockUser3 = AppUser(mockUuid(3), "emailUser3", true, "User3", "USER")
+        mockUser4 = AppUser(mockUuid(4), "emailUser4", true, "User4", "USER")
 
         //Add mock users to household with householdId 1 remaining constant
         mockHouseholdMember1 = HouseholdMember(mockUuid(1), mockUuid(1), mockUuid(1))

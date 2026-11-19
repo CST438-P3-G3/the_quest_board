@@ -1,26 +1,35 @@
 package com.example.model
 
-import org.springframework.data.annotation.Id
-import org.springframework.data.relational.core.mapping.Column
-import org.springframework.data.relational.core.mapping.Table
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import java.util.UUID
 
-@Table("task")
-data class Task (
+@Entity
+@Table(name = "task")
+data class Task(
     @Id
     val id: UUID,
-    @Column("household_id")
+
+    @Column(name = "household_id")
     val householdId: UUID,
-    @Column("created_by_user_id")
+
+    @Column(name = "created_by_user_id")
     val createdByUserId: UUID,
-    @Column("assignee_user_id")
+
+    @Column(name = "assignee_user_id")
     val assigneeUserId: UUID,
-    @Column("name")
+
+    @Column(name = "name")
     val name: String,
-    @Column("description")
+
+    @Column(name = "description")
     val description: String,
-    @Column("point_value")
+
+    @Column(name = "point_value")
     val pointValue: Int,
-    @Column("location")
+
+    @Column(name = "location")
     val location: String
 )
